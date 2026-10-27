@@ -38,7 +38,7 @@ async function handleArchive(
   res.setHeader("Content-Type", "application/gzip");
   res.setHeader("Content-Disposition", `attachment; filename="${id}.tar.gz"`);
 
-  const pack = tarPack();
+  const pack = tarPack({ ignore: (filePath: string) => false, map: (header: any) => header });
   const gzip = createGzip();
   pack.pipe(gzip).pipe(res);
 
@@ -85,7 +85,7 @@ apiRoute(ctx.app, ctx.registry, {
     } catch (error) {
       if (!res.headersSent) {
         if (isBlobNotFound(error)) {
-          res.status(404).json({ error: "Snapshot not found — the blob may have been deleted or is no longer available" });
+          res.status(404).json({ error: "Snapshot not found - the blob may have been deleted or is no longer available" });
           return;
         }
         throw error;
@@ -121,7 +121,7 @@ apiRoute(ctx.app, ctx.registry, {
     } catch (error) {
       if (!res.headersSent) {
         if (isBlobNotFound(error)) {
-          res.status(404).json({ error: "Archive not found — the blob may have been deleted or is no longer available" });
+          res.status(404).json({ error: "Archive not found - the blob may have been deleted or is no longer available" });
           return;
         }
         throw error;
